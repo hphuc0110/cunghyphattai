@@ -7,6 +7,12 @@ export async function POST(request: NextRequest) {
     // Require admin authentication
     await requireAdmin(request)
 
+    const token = process.env.BLOB_READ_WRITE_TOKEN
+    if (!token) {
+      console.error("Missing BLOB_READ_WRITE_TOKEN env var")
+      return NextResponse.json({ error: "Server misconfigured: missing BLOB_READ_WRITE_TOKEN" }, { status: 500 })
+    }
+
     const formData = await request.formData()
     const file = formData.get("file") as File
 
@@ -29,6 +35,9 @@ export async function POST(request: NextRequest) {
     // Upload to Vercel Blob
     const blob = await put(file.name, file, {
       access: "public",
+      allowOverwrite: true,
+      contentType: file.type,
+      token,
     })
 
     return NextResponse.json({
