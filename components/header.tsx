@@ -50,9 +50,9 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center gap-2 md:gap-3">
           <Button variant="ghost" size="sm" className="hidden gap-2 md:flex" asChild>
-            <a href="tel:0901234567">
+            <a href="tel:091 588 58 88">
               <Phone className="h-4 w-4" />
-              <span>0901 234 567</span>
+              <span>091 588 58 88</span>
             </a>
           </Button>
 
@@ -116,11 +116,11 @@ export function Header() {
               {/* Contact Info */}
               <div className="mt-auto border-t px-6 py-6">
                 <a
-                  href="tel:0901234567"
+                  href="tel:091 588 58 88"
                   className="flex items-center gap-3 text-lg font-medium hover:text-primary transition-colors"
                 >
                   <Phone className="h-5 w-5" />
-                  <span>0901 234 567</span>
+                  <span>091 588 58 88</span>
                 </a>
               </div>
             </SheetContent>

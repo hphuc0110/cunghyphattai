@@ -648,7 +648,7 @@ export const mockOrders: Order[] = [
     customerName: "Nguyễn Văn A",
     customerPhone: "0901234567",
     customerEmail: "nguyenvana@email.com",
-    deliveryAddress: "123 Nguyễn Huệ, Quận 1, TP.HCM",
+    deliveryAddress: "47 Cửa Bắc, Ba Đình, Hà Nội",
     items: [
       {
         product: products[0],

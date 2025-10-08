@@ -163,7 +163,7 @@ export default function TrackOrderPage() {
                         <Input
                           id="phone"
                           type="tel"
-                          placeholder="0901234567"
+                          placeholder="091 588 58 88"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
                           required
@@ -199,14 +199,14 @@ export default function TrackOrderPage() {
                 <div className="space-y-1">
                   <p>
                     <strong>Hotline:</strong>{" "}
-                    <a href="tel:0901234567" className="text-primary hover:underline">
-                      0901 234 567
+                    <a href="tel:091 588 58 88" className="text-primary hover:underline">
+                      091 588 58 88
                     </a>
                   </p>
                   <p>
                     <strong>Email:</strong>{" "}
-                    <a href="mailto:info@cunghyphattai.vn" className="text-primary hover:underline">
-                      info@cunghyphattai.vn
+                    <a href="mailto:https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr" className="text-primary hover:underline">
+                      https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr
                     </a>
                   </p>
                 </div>

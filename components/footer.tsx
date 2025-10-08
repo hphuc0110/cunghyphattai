@@ -57,22 +57,28 @@ export function Footer() {
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 text-primary" />
                 <div>
-                  <a href="tel:0901234567" className="text-muted-foreground hover:text-primary">
-                    0901 234 567
+                  <a href="tel:091 588 58 88" className="text-muted-foreground hover:text-primary">
+                    091 588 58 88
                   </a>
                 </div>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 text-primary" />
                 <div>
-                  <a href="mailto:info@cunghyphattai.vn" className="text-muted-foreground hover:text-primary">
-                    info@cunghyphattai.vn
-                  </a>
+                <a
+  href="https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="hover:text-primary"
+>
+ Facebook
+</a>
+
                 </div>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">123 Nguyễn Huệ, Quận 1, TP.HCM</span>
+                <span className="text-muted-foreground">47 Cửa Bắc, Ba Đình, Hà Nội</span>
               </li>
             </ul>
           </div>
@@ -84,8 +90,7 @@ export function Footer() {
               <li className="flex items-start gap-2">
                 <Clock className="mt-0.5 h-4 w-4 text-primary" />
                 <div className="text-muted-foreground">
-                  <div>Thứ 2 - Thứ 6: 10:00 - 22:00</div>
-                  <div>Thứ 7 - CN: 09:00 - 23:00</div>
+                  <div>10h - 14h, 17h -22h</div>
                 </div>
               </li>
             </ul>

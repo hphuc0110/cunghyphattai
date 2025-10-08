@@ -150,7 +150,7 @@ export default function CheckoutPage() {
                           <Input
                             id="phone"
                             type="tel"
-                            placeholder="0901234567"
+                            placeholder="091 588 58 88"
                             required
                             value={formData.customerPhone}
                             onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}

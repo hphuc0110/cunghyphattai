@@ -21,7 +21,7 @@ export default function HomePage() {
           <div className="container relative py-12 md:py-24 px-4">
             <div className="mx-auto max-w-3xl text-center">
               <div className="mb-4 md:mb-6 inline-block rounded-full bg-primary/10 px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm font-semibold text-primary">
-                恭喜發財 - Chúc Mừng Phát Tài
+                恭喜發財 - Cung Hỷ Phát Tài
               </div>
               <h1 className="mb-4 md:mb-6 text-3xl md:text-4xl lg:text-6xl font-bold tracking-tight text-balance">
                 Hương Vị Trung Hoa
@@ -40,7 +40,7 @@ export default function HomePage() {
                   </Link>
                 </Button>
                 <Button size="lg" variant="outline" className="font-semibold bg-transparent w-full sm:w-auto" asChild>
-                  <a href="tel:0901234567">Gọi Đặt Hàng: 0901 234 567</a>
+                  <a href="tel:091 588 58 88">Gọi Đặt Hàng: 091 588 58 88</a>
                 </Button>
               </div>
             </div>
@@ -143,7 +143,7 @@ export default function HomePage() {
                 Gọi ngay để được tư vấn và đặt hàng. Chúng tôi luôn sẵn sàng phục vụ bạn!
               </p>
               <Button size="lg" variant="secondary" className="font-semibold w-full sm:w-auto" asChild>
-                <a href="tel:0901234567">Gọi: 0901 234 567</a>
+                <a href="tel:091 588 58 88">Gọi: 091 588 58 88</a>
               </Button>
             </div>
           </div>

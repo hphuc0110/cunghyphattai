@@ -107,29 +107,34 @@ export default function AboutPage() {
               <div className="space-y-4 text-left">
                 <div className="rounded-lg border p-4">
                   <div className="font-medium">Địa chỉ</div>
-                  <div className="text-muted-foreground">123 Nguyễn Huệ, Quận 1, TP.HCM</div>
+                  <div className="text-muted-foreground">47 Cửa Bắc, Ba Đình, Hà Nội</div>
                 </div>
                 <div className="rounded-lg border p-4">
                   <div className="font-medium">Điện thoại</div>
                   <div className="text-muted-foreground">
-                    <a href="tel:0901234567" className="hover:text-primary">
-                      0901 234 567
+                    <a href="tel:091 588 58 88" className="hover:text-primary">
+                      091 588 58 88
                     </a>
                   </div>
                 </div>
                 <div className="rounded-lg border p-4">
                   <div className="font-medium">Email</div>
                   <div className="text-muted-foreground">
-                    <a href="mailto:info@cunghyphattai.vn" className="hover:text-primary">
-                      info@cunghyphattai.vn
-                    </a>
+                  <a
+  href="https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="hover:text-primary"
+>
+  https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr
+</a>
+
                   </div>
                 </div>
                 <div className="rounded-lg border p-4">
                   <div className="font-medium">Giờ mở cửa</div>
                   <div className="text-muted-foreground">
-                    <div>Thứ 2 - Thứ 6: 10:00 - 22:00</div>
-                    <div>Thứ 7 - CN: 09:00 - 23:00</div>
+                    <div>10h - 14h, 17h -22h</div>
                   </div>
                 </div>
               </div>
