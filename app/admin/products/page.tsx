@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -13,15 +14,20 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import type { Product } from "@/lib/types"
-import { categories } from "@/lib/data"
+import type { Category } from "@/lib/types"
 import Image from "next/image"
 import { Search, Plus, Pencil, Trash2, X } from "lucide-react"
 
 export default function AdminProductsPage() {
   const { toast } = useToast()
+  const searchParams = useSearchParams()
+  const categoryParam = searchParams.get("category")
+  
   const [products, setProducts] = useState<Product[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string>(categoryParam || "")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -39,13 +45,29 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     fetchProducts()
-  }, [searchQuery])
+    fetchCategories()
+  }, [searchQuery, selectedCategory])
+
+  async function fetchCategories() {
+    try {
+      const response = await fetch("/api/categories")
+      const data = await response.json()
+      if (data.success) {
+        setCategories(data.data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories:", error)
+    }
+  }
 
   async function fetchProducts() {
     try {
       const params = new URLSearchParams()
       if (searchQuery) {
         params.append("search", searchQuery)
+      }
+      if (selectedCategory) {
+        params.append("category", selectedCategory)
       }
 
       const response = await fetch(`/api/products?${params.toString()}`)
@@ -121,7 +143,7 @@ export default function AdminProductsPage() {
 
       setIsDialogOpen(false)
       resetForm()
-      fetchProducts()
+      await fetchProducts()
     } catch (error: any) {
       console.error("[v0] Error saving product:", error)
       toast({
@@ -169,7 +191,7 @@ export default function AdminProductsPage() {
         description: "Sản phẩm đã được xóa khỏi danh sách",
       })
 
-      fetchProducts()
+      await fetchProducts()
     } catch (error: any) {
       console.error("[v0] Error deleting product:", error)
       toast({
@@ -300,7 +322,22 @@ export default function AdminProductsPage() {
     <div className="p-8">
       <div className="mb-8">
         <h1 className="mb-2 text-3xl font-bold">Quản Lý Sản Phẩm</h1>
-        <p className="text-muted-foreground">Thêm, sửa, xóa món ăn trong menu</p>
+        <p className="text-muted-foreground">
+          {selectedCategory 
+            ? `Đang hiển thị sản phẩm trong danh mục: ${categories.find(c => c.id === selectedCategory)?.name || selectedCategory}`
+            : "Thêm, sửa, xóa món ăn trong menu"
+          }
+        </p>
+        {selectedCategory && (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setSelectedCategory("")}
+            className="mt-2"
+          >
+            Xem tất cả sản phẩm
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -317,6 +354,22 @@ export default function AdminProductsPage() {
                   className="pl-9"
                 />
               </div>
+              <Select
+                value={selectedCategory || "all"}
+                onValueChange={(value) => setSelectedCategory(value === "all" ? "" : value)}
+              >
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Tất cả danh mục" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả danh mục</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Dialog
                 open={isDialogOpen}
                 onOpenChange={(open) => {

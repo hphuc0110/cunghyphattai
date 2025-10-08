@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import type { Category } from "@/lib/types"
 import Image from "next/image"
-import { Plus, Pencil, Trash2, X, GripVertical } from "lucide-react"
+import { Plus, Pencil, Trash2, X, GripVertical, Eye } from "lucide-react"
 
 export default function AdminCategoriesPage() {
   const { toast } = useToast()
@@ -439,6 +439,15 @@ export default function AdminCategoriesPage() {
                       <p className="line-clamp-2 text-sm text-muted-foreground">{category.description}</p>
 
                       <div className="flex gap-2 pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 gap-2 bg-transparent"
+                          onClick={() => window.open(`/admin/products?category=${category.id}`, '_blank')}
+                        >
+                          <Eye className="h-3 w-3" />
+                          Xem sản phẩm
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
