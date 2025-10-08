@@ -1,13 +1,15 @@
 import Link from "next/link"
-import { Phone, Mail, MapPin, Clock } from "lucide-react"
+import { Phone, Mail, MapPin, Clock, Facebook } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t bg-muted/50">
-      <div className="container py-12">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="border-t bg-[#FAFAF5]">
+      {/* ✅ Container đồng bộ toàn trang */}
+      <div className="w-full max-w-[1500px] xl:max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-16 xl:px-24 py-12">
+        <div className="grid gap-10 sm:gap-12 md:grid-cols-2 lg:grid-cols-4">
+          
           {/* About */}
-          <div>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <div className="mb-4 flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
                 <span className="text-xl font-bold text-primary-foreground">恭</span>
@@ -17,15 +19,17 @@ export function Footer() {
                 <span className="text-xs text-muted-foreground">Ẩm Thực Trung Hoa</span>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Mang đến hương vị ẩm thực Trung Hoa chính gốc với các món ăn truyền thống được chế biến từ nguyên liệu
-              tươi ngon nhất.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Mang đến hương vị ẩm thực Trung Hoa chính gốc với các món ăn truyền thống
+              được chế biến từ nguyên liệu tươi ngon nhất.
             </p>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="mb-4 font-semibold">Liên Kết</h3>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <h3 className="mb-4 font-semibold text-[#E11B22] uppercase tracking-wide">
+              Liên Kết
+            </h3>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/" className="text-muted-foreground transition-colors hover:text-primary">
@@ -51,53 +55,51 @@ export function Footer() {
           </div>
 
           {/* Contact */}
-          <div>
-            <h3 className="mb-4 font-semibold">Liên Hệ</h3>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <h3 className="mb-4 font-semibold text-[#E11B22] uppercase tracking-wide">
+              Liên Hệ
+            </h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-2">
-                <Phone className="mt-0.5 h-4 w-4 text-primary" />
-                <div>
-                  <a href="tel:091 588 58 88" className="text-muted-foreground hover:text-primary">
-                    091 588 58 88
-                  </a>
-                </div>
+              <li className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary" />
+                <a href="tel:0915885888" className="text-muted-foreground hover:text-primary">
+                  091 588 58 88
+                </a>
               </li>
-              <li className="flex items-start gap-2">
-                <Mail className="mt-0.5 h-4 w-4 text-primary" />
-                <div>
+              <li className="flex items-center gap-2">
+                <Facebook className="h-4 w-4 text-primary" />
                 <a
-  href="https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="hover:text-primary"
->
- Facebook
-</a>
-
-                </div>
+                  href="https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-primary"
+                >
+                  Facebook
+                </a>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 text-primary" />
+              <li className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
                 <span className="text-muted-foreground">47 Cửa Bắc, Ba Đình, Hà Nội</span>
               </li>
             </ul>
           </div>
 
           {/* Hours */}
-          <div>
-            <h3 className="mb-4 font-semibold">Giờ Mở Cửa</h3>
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <h3 className="mb-4 font-semibold text-[#E11B22] uppercase tracking-wide">
+              Giờ Mở Cửa
+            </h3>
             <ul className="space-y-2 text-sm">
-              <li className="flex items-start gap-2">
-                <Clock className="mt-0.5 h-4 w-4 text-primary" />
-                <div className="text-muted-foreground">
-                  <div>10h - 14h, 17h -22h</div>
-                </div>
+              <li className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" />
+                <span className="text-muted-foreground">10h - 14h, 17h - 22h</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
+        {/* Bottom line */}
+        <div className="mt-10 border-t pt-8 text-center text-sm text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} Cung Hỷ Phát Tài. All rights reserved.</p>
         </div>
       </div>

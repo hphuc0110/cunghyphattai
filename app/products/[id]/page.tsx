@@ -55,16 +55,14 @@ export default function ProductDetailPage() {
     fetchProduct()
   }, [params.id, router, toast])
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price)
-  }
 
   const handleAddToCart = () => {
     if (!product) return
-
     addItem(product, quantity, specialInstructions)
     toast({
       title: "Đã thêm vào giỏ hàng",
@@ -75,12 +73,12 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col bg-white">
         <Header />
         <main className="flex-1">
           <div className="container py-8">
             <div className="grid gap-8 lg:grid-cols-2">
-              <div className="aspect-square animate-pulse rounded-lg bg-muted" />
+              <div className="aspect-square animate-pulse rounded-2xl bg-muted" />
               <div className="space-y-4">
                 <div className="h-8 w-3/4 animate-pulse rounded bg-muted" />
                 <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
@@ -94,75 +92,82 @@ export default function ProductDetailPage() {
     )
   }
 
-  if (!product) {
-    return null
-  }
+  if (!product) return null
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-white text-gray-900">
       <Header />
 
       <main className="flex-1">
         <div className="container py-8">
-          {/* Back Button */}
-          <Button variant="ghost" className="mb-6 gap-2" onClick={() => router.back()}>
+          {/* Nút quay lại */}
+          <Button
+            variant="ghost"
+            className="mb-6 gap-2 hover:translate-x-[-4px] transition-transform"
+            onClick={() => router.back()}
+          >
             <ArrowLeft className="h-4 w-4" />
             Quay lại
           </Button>
 
-          <div className="grid gap-8 lg:grid-cols-2">
-            {/* Product Image */}
-            <div className="relative aspect-square overflow-hidden rounded-lg">
-              <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
+          <div className="grid gap-10 lg:grid-cols-2">
+            {/* Ảnh món ăn */}
+            <div className="relative aspect-square overflow-hidden rounded-2xl shadow-md group bg-white">
+              <Image
+                src={product.image || "/placeholder.svg"}
+                alt={product.name}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+              />
               {!product.available && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                  <Badge variant="secondary" className="text-lg">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                  <Badge variant="secondary" className="text-lg px-4 py-2 rounded-full">
                     Hết hàng
                   </Badge>
                 </div>
               )}
             </div>
 
-            {/* Product Info */}
+            {/* Thông tin sản phẩm */}
             <div className="flex flex-col gap-6">
-            <div>
-            <div className="mb-3 flex flex-wrap items-center gap-2">
-    {product.featured && (
-      <Badge className="bg-secondary text-secondary-foreground">Nổi bật</Badge>
-    )}
+              <div>
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+              {/* Badge Nổi bật */}
+                 {product.featured === true && (
+                     <Badge className="bg-primary/15 text-primary font-medium">
+                              Nổi bật
+                       </Badge>
+      )}
 
-    {product.spicyLevel && product.spicyLevel > 0 && (
-      <Badge variant="destructive" className="gap-1">
-        <Flame className="h-3 w-3" />
-        {product.spicyLevel > 3 ? "Rất cay" : "Cay"}
-      </Badge>
-    )}
-    {Array.isArray(product.tags) && product.tags.length > 0 &&
-      product.tags.map((tag: string) => (
-        <Badge key={tag} variant="outline">
-          {tag}
-        </Badge>
-      ))
-    }
-  </div>
+            {/* Badge Độ cay */}
+            {typeof product.spicyLevel === "number" && product.spicyLevel > 0 && (
+           <Badge variant="destructive" className="gap-1">
+             <Flame className="h-3 w-3" />
+             {product.spicyLevel > 3 ? "Rất cay" : "Cay"}
+           </Badge>
+          )}
 
-  <h1 className="mb-2 text-3xl font-bold text-balance md:text-4xl">{product.name}</h1>
-  <p className="text-lg text-muted-foreground">{product.nameEn}</p>
-</div>
+          {/* Badge Tags */}
+               {Array.isArray(product.tags) &&
+                  product.tags.length > 0 &&
+              product.tags.map((tag: string) => (
+              <Badge key={tag} variant="outline">
+              {tag}
+           </Badge>
+         ))}
+    </div>
 
-              <Card>
-                <CardContent className="p-6">
-                  <p className="text-muted-foreground text-pretty">{product.description}</p>
-                  <p className="mt-2 text-sm text-muted-foreground">{product.descriptionEn}</p>
-                </CardContent>
-              </Card>
+
+                <h1 className="text-3xl md:text-4xl font-bold text-balance">{product.name}</h1>
+                <p className="text-lg text-muted-foreground italic">{product.nameEn}</p>
+              </div>
 
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}</span>
                 <span className="text-sm text-muted-foreground">/ phần</span>
               </div>
 
-              {/* Quantity Selector */}
+              {/* Chọn số lượng */}
               <div>
                 <label className="mb-2 block text-sm font-medium">Số lượng</label>
                 <div className="flex items-center gap-3">
@@ -171,6 +176,7 @@ export default function ProductDetailPage() {
                     size="icon"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={!product.available}
+                    className="border-gray-300 hover:bg-gray-100"
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -180,13 +186,14 @@ export default function ProductDetailPage() {
                     size="icon"
                     onClick={() => setQuantity(quantity + 1)}
                     disabled={!product.available}
+                    className="border-gray-300 hover:bg-gray-100"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
 
-              {/* Special Instructions */}
+              {/* Ghi chú */}
               <div>
                 <label className="mb-2 block text-sm font-medium">Ghi chú đặc biệt (tùy chọn)</label>
                 <Textarea
@@ -195,17 +202,25 @@ export default function ProductDetailPage() {
                   onChange={(e) => setSpecialInstructions(e.target.value)}
                   disabled={!product.available}
                   rows={3}
+                  className="resize-none border-gray-300 focus:ring-primary/40"
                 />
               </div>
 
-              {/* Add to Cart */}
+              {/* Nút thêm vào giỏ */}
               <div className="flex flex-col gap-3">
-                <Button size="lg" className="gap-2" onClick={handleAddToCart} disabled={!product.available}>
+                <Button
+                  size="lg"
+                  className="gap-2 bg-primary hover:bg-primary/90 text-white shadow-md"
+                  onClick={handleAddToCart}
+                  disabled={!product.available}
+                >
                   <ShoppingCart className="h-5 w-5" />
-                  Thêm vào giỏ hàng - {formatPrice(product.price * quantity)}
+                  Thêm vào giỏ hàng – {formatPrice(product.price * quantity)}
                 </Button>
                 {!product.available && (
-                  <p className="text-center text-sm text-muted-foreground">Món này hiện hết hàng</p>
+                  <p className="text-center text-sm text-muted-foreground">
+                    Món này hiện hết hàng
+                  </p>
                 )}
               </div>
             </div>

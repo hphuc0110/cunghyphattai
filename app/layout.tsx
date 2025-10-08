@@ -27,7 +27,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans bg-[#FAFAF5] relative min-h-screen w-full overflow-x-hidden`}
       >
-        {/* ✅ Hình nền chìm full màn hình với opacity 20% */}
+        {/* ✅ Hình nền chìm full màn hình */}
         <div
           className="fixed inset-0 -z-10 opacity-90"
           style={{
@@ -39,11 +39,21 @@ export default function RootLayout({
           }}
         />
 
-        {/* ✅ Nội dung chính, responsive và canh giữa */}
+        {/* ✅ Nội dung chính: canh giữa, thoáng 2 bên */}
         <Suspense fallback={null}>
-          <main className="relative z-10 flex flex-col min-h-screen w-full items-center justify-start px-4 sm:px-6 lg:px-8">
-            <div className="w-full max-w-7xl">{children}</div>
+          <main
+            className="
+              relative z-10 flex flex-col min-h-screen w-full 
+              items-center justify-start 
+              px-6 sm:px-8 md:px-10 lg:px-16 xl:px-24
+            "
+          >
+            {/* ✅ Giới hạn hợp lý và căn giữa */}
+            <div className="w-full max-w-[1500px] xl:max-w-[1600px] mx-auto text-center">
+              {children}
+            </div>
           </main>
+
           <Toaster />
         </Suspense>
 

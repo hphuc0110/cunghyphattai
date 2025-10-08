@@ -6,8 +6,9 @@ import { Footer } from "@/components/footer"
 import { ProductCard } from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, Filter } from "lucide-react"
+import { Search, Filter, ArrowRight } from "lucide-react"
 import type { Product, Category } from "@/lib/types"
+import { categories as staticCategories } from "@/lib/data"
 import { useSearchParams } from "next/navigation"
 
 export default function MenuPage() {
@@ -65,86 +66,64 @@ export default function MenuPage() {
           </div>
         </section>
 
-        {/* Content */}
+        {/* Search + Products */}
         <div className="container py-6 md:py-10 px-4 md:px-6">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar */}
-            <aside className="lg:w-64 lg:shrink-0 space-y-6">
-              {/* Search */}
-              <div className="bg-white p-4 rounded-xl shadow-sm border">
-                <label className="block mb-2 text-sm font-semibold text-gray-700">
-                  Tìm kiếm món ăn
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Nhập tên món..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 h-10 rounded-lg"
-                  />
-                </div>
-              </div>
-
-              {/* Categories */}
-              <div className="bg-white p-4 rounded-xl shadow-sm border">
-                <div className="mb-3 flex items-center gap-2">
-                  <Filter className="h-4 w-4 text-primary" />
-                  <h2 className="text-sm font-semibold text-gray-700">Danh mục món</h2>
+          <div className="flex flex-col gap-8">
+            {/* Search + Filter */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <label className="block mb-2 text-sm font-semibold text-gray-700">Tìm kiếm món ăn</label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      placeholder="Nhập tên món..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9 h-11 rounded-lg"
+                    />
+                  </div>
                 </div>
 
-                {/* Responsive scroll area */}
-                <div
-                  className="flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:space-y-2 lg:overflow-y-auto 
-                             [-ms-overflow-style:none] [scrollbar-width:thin] 
-                             [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-border [&::-webkit-scrollbar-thumb]:rounded-full"
-                >
-                  <Button
-                    variant={selectedCategory === "all" ? "default" : "outline"}
-                    className={`shrink-0 rounded-full px-4 h-9 text-sm font-medium transition-all ${
-                      selectedCategory === "all"
-                        ? "bg-primary text-white"
-                        : "bg-gray-50 hover:bg-gray-100"
-                    } lg:w-full lg:justify-start lg:rounded-md lg:h-10`}
-                    onClick={() => setSelectedCategory("all")}
-                  >
-                    Tất cả món
-                  </Button>
-
-                  {categories.map((category) => (
-                    <Button
-                      key={category.id}
-                      variant={selectedCategory === category.id ? "default" : "outline"}
-                      className={`shrink-0 rounded-full px-4 h-9 text-sm font-medium transition-all ${
-                        selectedCategory === category.id
-                          ? "bg-primary text-white"
-                          : "bg-gray-50 hover:bg-gray-100"
-                      } lg:w-full lg:justify-start lg:rounded-md lg:h-10`}
-                      onClick={() => setSelectedCategory(category.id)}
+                <div className="sm:w-64">
+                  <label className="block mb-2 text-sm font-semibold text-gray-700">Danh mục</label>
+                  <div className="relative">
+                    <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="w-full h-11 pl-9 pr-4 bg-background border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                     >
-                      {category.name}
-                    </Button>
-                  ))}
+                      <option value="all">Tất cả món</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
-            </aside>
+            </div>
 
-            {/* Product List */}
+            {/* Product list */}
             <section className="flex-1 min-w-0">
               {loading ? (
-                <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="h-72 animate-pulse rounded-lg bg-gray-200" />
+                <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                  {[...Array(10)].map((_, i) => (
+                    <div key={i} className="h-80 animate-pulse rounded-xl bg-gray-200" />
                   ))}
                 </div>
               ) : products.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
-                  <p className="text-muted-foreground text-base">
-                    Không tìm thấy món ăn nào phù hợp
+                <div className="flex flex-col items-center justify-center min-h-[400px] text-center bg-white rounded-2xl shadow-sm border">
+                  <div className="text-6xl mb-4">🍽️</div>
+                  <h3 className="text-xl font-semibold mb-2">Không tìm thấy món ăn nào</h3>
+                  <p className="text-muted-foreground mb-6 max-w-md">
+                    Hãy thử thay đổi từ khóa tìm kiếm hoặc chọn danh mục khác
                   </p>
                   <Button
                     variant="outline"
-                    className="mt-4 h-10"
+                    className="h-11 px-6"
                     onClick={() => {
                       setSelectedCategory("all")
                       setSearchQuery("")
@@ -155,13 +134,24 @@ export default function MenuPage() {
                 </div>
               ) : (
                 <>
-                  <div className="mb-4 text-sm text-muted-foreground">
-                    Tìm thấy{" "}
-                    <span className="font-semibold text-primary">{products.length}</span> món ăn
+                  <div className="mb-6 flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      Hiển thị <span className="font-semibold text-primary">{products.length}</span> món ăn
+                    </div>
+                    {selectedCategory !== "all" && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSelectedCategory("all")}
+                        className="text-primary hover:text-primary/80"
+                      >
+                        Xem tất cả
+                      </Button>
+                    )}
                   </div>
-                  <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+                  <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3">
                     {products.map((product) => (
-                      <div key={product.id} className="transition-transform hover:-translate-y-1">
+                      <div key={product.id} className="transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
                         <ProductCard product={product} />
                       </div>
                     ))}

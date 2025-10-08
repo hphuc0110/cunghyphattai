@@ -124,3 +124,66 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes scroll-right {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  .animate-scroll-left {
+    animation: scroll-left linear infinite;
+  }
+
+  .animate-scroll-right {
+    animation: scroll-right linear infinite;
+  }
+}
+
+@keyframes border-glow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 400% 0%;
+  }
+}
+
+.animate-border-glow {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 80, 80, 0.6),
+    rgba(255, 150, 150, 0.8),
+    rgba(255, 255, 255, 0.6),
+    rgba(255, 150, 150, 0.8),
+    rgba(255, 80, 80, 0.6)
+  );
+  background-size: 400% 400%;
+  animation: border-glow 6s linear infinite;
+  mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: destination-out;
+  padding: 2px;
+  border-radius: 2rem;
+}
+@layer utilities {
+  .page-container {
+    @apply w-full max-w-[1500px] xl:max-w-[1600px] mx-auto px-6 sm:px-8 md:px-10 lg:px-16 xl:px-24;
+  }
+}
+
