@@ -125,24 +125,30 @@ export default function ProductDetailPage() {
 
             {/* Product Info */}
             <div className="flex flex-col gap-6">
-              <div>
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                  {product.featured && <Badge className="bg-secondary text-secondary-foreground">Nổi bật</Badge>}
-                  {product.spicyLevel && product.spicyLevel > 0 && (
-                    <Badge variant="destructive" className="gap-1">
-                      <Flame className="h-3 w-3" />
-                      {product.spicyLevel > 3 ? "Rất cay" : "Cay"}
-                    </Badge>
-                  )}
-                  {product.tags.map((tag) => (
-                    <Badge key={tag} variant="outline">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                <h1 className="mb-2 text-3xl font-bold text-balance md:text-4xl">{product.name}</h1>
-                <p className="text-lg text-muted-foreground">{product.nameEn}</p>
-              </div>
+            <div>
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+    {product.featured && (
+      <Badge className="bg-secondary text-secondary-foreground">Nổi bật</Badge>
+    )}
+
+    {product.spicyLevel && product.spicyLevel > 0 && (
+      <Badge variant="destructive" className="gap-1">
+        <Flame className="h-3 w-3" />
+        {product.spicyLevel > 3 ? "Rất cay" : "Cay"}
+      </Badge>
+    )}
+    {Array.isArray(product.tags) && product.tags.length > 0 &&
+      product.tags.map((tag: string) => (
+        <Badge key={tag} variant="outline">
+          {tag}
+        </Badge>
+      ))
+    }
+  </div>
+
+  <h1 className="mb-2 text-3xl font-bold text-balance md:text-4xl">{product.name}</h1>
+  <p className="text-lg text-muted-foreground">{product.nameEn}</p>
+</div>
 
               <Card>
                 <CardContent className="p-6">

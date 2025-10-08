@@ -59,12 +59,13 @@ export function ProductCard({ product }: ProductCardProps) {
                 Nổi bật
               </Badge>
             )}
-            {product.spicyLevel && product.spicyLevel > 0 && (
-              <Badge variant="destructive" className="absolute right-2 top-2 gap-1 font-semibold text-xs">
-                <Flame className="h-3 w-3" />
-                {product.spicyLevel > 3 ? "Rất cay" : "Cay"}
-              </Badge>
-            )}
+{Number(product.spicyLevel) > 0 && (
+  <Badge variant="destructive" className="absolute right-2 top-2 gap-1 font-semibold text-xs">
+    <Flame className="h-3 w-3" />
+    {Number(product.spicyLevel) > 3 ? "Rất cay" : "Cay"}
+  </Badge>
+)}
+
           </div>
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-3 md:gap-3.5 p-3 md:p-4">
