@@ -149,7 +149,7 @@ export default function MenuPage() {
                       </Button>
                     )}
                   </div>
-                  <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3">
+                  <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
                     {products.map((product) => (
                       <div key={product.id} className="transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
                         <ProductCard product={product} />

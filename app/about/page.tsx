@@ -28,15 +28,17 @@ export default function AboutPage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-[#fffaf5]">
       <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="border-b bg-gradient-to-br from-primary/10 via-background to-secondary/10 py-16">
-          <div className="container">
+        <section className="relative border-b bg-gradient-to-br from-primary/20 via-background/20 to-secondary/20 py-24">
+          <div className="container relative z-10">
             <div className="mx-auto max-w-3xl text-center">
-              <h1 className="mb-4 text-4xl font-bold text-balance md:text-5xl">Về Cung Hỷ Phát Tài</h1>
+              <h1 className="mb-4 text-4xl font-extrabold text-primary md:text-5xl">
+                Về Cung Hỷ Phát Tài
+              </h1>
               <p className="text-lg text-muted-foreground text-pretty">
                 Mang đến hương vị ẩm thực Trung Hoa chính gốc cho người Việt
               </p>
@@ -45,10 +47,10 @@ export default function AboutPage() {
         </section>
 
         {/* Story Section */}
-        <section className="py-16">
+        <section className="py-20 bg-white">
           <div className="container">
             <div className="mx-auto max-w-3xl space-y-6 text-center">
-              <h2 className="text-3xl font-bold text-balance">Câu Chuyện Của Chúng Tôi</h2>
+              <h2 className="text-3xl font-bold text-primary">Câu Chuyện Của Chúng Tôi</h2>
               <div className="space-y-4 text-muted-foreground text-pretty">
                 <p>
                   Cung Hỷ Phát Tài được thành lập với mong muốn mang đến cho thực khách những món ăn Trung Hoa chính
@@ -69,24 +71,27 @@ export default function AboutPage() {
         </section>
 
         {/* Values Section */}
-        <section className="bg-muted/50 py-16">
+        <section className="py-20 bg-gradient-to-r from-red-50 via-yellow-50 to-red-50">
           <div className="container">
             <div className="mb-12 text-center">
-              <h2 className="mb-3 text-3xl font-bold text-balance">Giá Trị Cốt Lõi</h2>
+              <h2 className="mb-3 text-3xl font-bold text-primary">Giá Trị Cốt Lõi</h2>
               <p className="text-muted-foreground text-pretty">Những giá trị mà chúng tôi luôn hướng tới</p>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               {values.map((value) => {
                 const Icon = value.icon
                 return (
-                  <Card key={value.title}>
+                  <Card
+                    key={value.title}
+                    className="transform rounded-xl border shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                  >
                     <CardContent className="p-6 text-center">
                       <div className="mb-4 flex justify-center">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                          <Icon className="h-8 w-8 text-primary" />
+                        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/20">
+                          <Icon className="h-10 w-10 text-primary" />
                         </div>
                       </div>
-                      <h3 className="mb-2 font-semibold">{value.title}</h3>
+                      <h3 className="mb-2 text-lg font-semibold text-primary">{value.title}</h3>
                       <p className="text-sm text-muted-foreground text-pretty">{value.description}</p>
                     </CardContent>
                   </Card>
@@ -97,50 +102,69 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Section */}
-        <section className="py-16">
-          <div className="container">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="mb-4 text-3xl font-bold text-balance">Liên Hệ Với Chúng Tôi</h2>
-              <p className="mb-8 text-muted-foreground text-pretty">
-                Hãy đến và trải nghiệm hương vị ẩm thực Trung Hoa chính gốc tại Cung Hỷ Phát Tài
-              </p>
-              <div className="space-y-4 text-left">
-                <div className="rounded-lg border p-4">
-                  <div className="font-medium">Địa chỉ</div>
-                  <div className="text-muted-foreground">47 Cửa Bắc, Ba Đình, Hà Nội</div>
-                </div>
-                <div className="rounded-lg border p-4">
-                  <div className="font-medium">Điện thoại</div>
-                  <div className="text-muted-foreground">
-                    <a href="tel:091 588 58 88" className="hover:text-primary">
-                      091 588 58 88
-                    </a>
-                  </div>
-                </div>
-                <div className="rounded-lg border p-4">
-                  <div className="font-medium">Email</div>
-                  <div className="text-muted-foreground">
-                  <a
-  href="https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="hover:text-primary"
->
-  https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr
-</a>
+        <section className="py-24 bg-gradient-to-br from-red-50 via-yellow-50 to-red-50 relative overflow-hidden">
+  {/* Optional decorative element */}
+  <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-red-100 opacity-20 blur-3xl"></div>
+  <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-yellow-100 opacity-20 blur-3xl"></div>
 
-                  </div>
-                </div>
-                <div className="rounded-lg border p-4">
-                  <div className="font-medium">Giờ mở cửa</div>
-                  <div className="text-muted-foreground">
-                    <div>10h - 14h, 17h -22h</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+  <div className="container relative z-10">
+    <div className="mx-auto max-w-2xl text-center">
+      <h2 className="mb-4 text-3xl md:text-4xl font-extrabold text-red-600">
+        Liên Hệ Với Chúng Tôi
+      </h2>
+      <p className="mb-12 text-muted-foreground text-lg md:text-xl">
+        Hãy đến và trải nghiệm hương vị ẩm thực Trung Hoa chính gốc tại Cung Hỷ Phát Tài
+      </p>
+      <div className="grid gap-8 sm:grid-cols-2">
+        {[
+          {
+            title: "Địa chỉ",
+            content: "47 Cửa Bắc, Ba Đình, Hà Nội",
+            icon: "🏠",
+          },
+          {
+            title: "Điện thoại",
+            content: "091 588 58 88",
+            icon: "📞",
+            link: "tel:0915885888",
+          },
+          {
+            title: "Facebook",
+            content: "https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr",
+            icon: "🌐",
+            link: "https://www.facebook.com/share/1FjKZxNuiX/?mibextid=wwXIfr",
+          },
+          {
+            title: "Giờ mở cửa",
+            content: "10h - 14h, 17h - 22h",
+            icon: "⏰",
+          },
+        ].map((item) => (
+          <div
+            key={item.title}
+            className="flex flex-col items-center rounded-2xl border border-red-200 p-8 shadow-lg bg-white transition-transform duration-300 hover:scale-105 hover:shadow-2xl"
+          >
+            <div className="mb-4 text-4xl">{item.icon}</div>
+            <div className="font-semibold text-lg mb-1 text-red-600">{item.title}</div>
+            {item.link ? (
+              <a
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-red-500 underline text-center break-all"
+              >
+                {item.content}
+              </a>
+            ) : (
+              <div className="text-muted-foreground text-center">{item.content}</div>
+            )}
           </div>
-        </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
       </main>
 
       <Footer />

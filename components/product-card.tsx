@@ -71,11 +71,7 @@ export function ProductCard({ product }: ProductCardProps) {
         <CardFooter className="flex flex-col items-start gap-3 md:gap-3.5 p-3 md:p-4">
           <div className="w-full">
             <h3 className="text-sm md:text-base font-bold leading-tight text-balance line-clamp-2">{product.name}</h3>
-            <p className="text-xs md:text-sm text-muted-foreground font-medium mt-0.5 line-clamp-1">{product.nameEn}</p>
           </div>
-          <p className="line-clamp-2 text-xs md:text-sm text-muted-foreground text-pretty leading-relaxed min-h-[2rem] md:min-h-[2.5rem]">
-            {product.description}
-          </p>
           <div className="flex w-full flex-col gap-2.5 md:gap-3">
             <div className="flex items-center justify-between">
               <span className="text-base md:text-lg lg:text-xl font-bold text-primary">

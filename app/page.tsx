@@ -3,11 +3,9 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { ProductCard } from "@/components/product-card"
-import { ArrowRight, Star, Clock, Truck } from "lucide-react"
+import { ArrowRight, Star, Clock, Truck, Menu, Phone } from "lucide-react"
 import { categories, products } from "@/lib/data"
-import { InfiniteMovingCards } from "@/components/infinite-moving-cards"
-import { motion } from "framer-motion"
+
 
 export default function HomePage() {
   const featuredProducts = products.filter((p) => p.featured).slice(0, 8)
@@ -15,80 +13,114 @@ export default function HomePage() {
   return (
     <>
       <Header />
+      <section className="relative min-h-screen w-full overflow-hidden">
+  {/* Background Image - Desktop */}
+  <div className="absolute inset-0 hidden md:block">
+    <img
+      src="/images/herosection.png"
+      alt="HEROSECTION"
+      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+      style={{ top: 0, left: 0 }}
+    />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/30 to-black/20" />
+  </div>
 
-    <section className="relative flex items-center justify-center overflow-hidden min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]">
-      {/* Ảnh nền chính */}
-      <div className="absolute inset-0">
-        <div
-          className="w-full h-full bg-cover bg-center transition-all duration-700 scale-105 hover:scale-110"
-          style={{
-            backgroundImage: "url(/images/herosection.png)",
-          }}
-        />
+  {/* Background Image - Mobile */}
+  <div className="absolute inset-0 md:hidden">
+    <img
+      src="/images/herosection-mobile.png" // bạn sẽ thêm ảnh riêng cho mobile
+      alt="HEROSECTION MOBILE"
+      className="h-full w-full object-cover"
+    />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/30 to-black/20" />
+  </div>
+
+  {/* Clouds & Lanterns - Chỉ hiện desktop */}
+  <div className="hidden md:block">
+    <img
+      src="/images/cloud.png"
+      alt="Cloud top left"
+      className="absolute top-0 left-0 w-100 h-100 opacity-90 pointer-events-none animate-cloud-left-right"
+      style={{ animationDuration: "30s" }}
+    />
+    <img
+      src="/images/cloud.png"
+      alt="Cloud top right"
+      className="absolute top-40 right-40 w-60 h-60 opacity-80 pointer-events-none animate-cloud-left-right"
+      style={{ animationDuration: "30s", animationDelay: "10s" }}
+    />
+    <img
+      src="/images/lantern.png"
+      alt="Lantern"
+      className="absolute right-40 w-70 h-70 pointer-events-none animate-cloud-left-right"
+      style={{ animationDuration: "50s", animationDelay: "10s" }}
+    />
+    <img
+      src="/images/cloud.png"
+      alt="Cloud bottom left"
+      className="absolute bottom-24 left-0 w-50 h-50 opacity-60 pointer-events-none animate-cloud-left-right"
+      style={{ animationDuration: "80s", animationDelay: "5s" }}
+    />
+  </div>
+
+  {/* Content Container */}
+  <div className="relative z-10 flex min-h-screen flex-col">
+    {/* Navigation */}
+    <nav className="flex items-center justify-between px-6 py-6 md:px-12 lg:px-16">
+      <div className="flex items-center gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:bg-white/10 lg:hidden"
+        >
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Menu</span>
+        </Button>
       </div>
+    </nav>
 
-      {/* Overlay hiệu ứng Trung Hoa */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
-      <div className="absolute inset-0 backdrop-blur-[1px]" />
+    {/* Hero Content - Right Aligned */}
+    <div className="flex flex-1 items-end justify-end px-6 pb-20 md:px-12 lg:pr-24 xl:pr-32">
+      <div className="max-w-2xl space-y-6 text-right">
+        <div className="flex items-center gap-8 pt-8">
+          {/* Phone */}
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-lg font-semibold text-white">091 588 58 88</p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm">
+              <Phone className="h-5 w-5 text-white" />
+            </div>
+          </div>
 
-      {/* Họa tiết trang trí Trung Hoa */}
-      <img
-        src="/images/cloud.png"
-        alt="Mây Trung Hoa"
-        className="absolute left-0 bottom-0 w-[180px] sm:w-[250px] opacity-80 animate-float-slow"
-      />
-      <img
-        src="/images/cloud.png"
-        alt="Mây Trung Hoa"
-        className="absolute right-0 top-0 w-[160px] sm:w-[220px] opacity-70 animate-float-slow-delayed"
-      />
-      <img
-        src="/images/lantern.png"
-        alt="Đèn lồng"
-        className="absolute top-10 left-30 w-[100px] sm:w-[140px] drop-shadow-[0_0_10px_rgba(255,200,100,0.7)] animate-swing-slow"
-      />
-
-      {/* Nội dung chính */}
-      <div className="relative z-10 text-center text-white px-6 sm:px-8 max-w-3xl">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-wide mb-6 text-yellow-300 drop-shadow-[0_0_10px_rgba(255,200,0,0.6)]">
-          Ẩm Thực Trung Hoa Thượng Hạng
-        </h1>
-
-        {/* Nút hành động */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button
-            size="lg"
-            asChild
-            className="relative overflow-hidden group font-semibold w-full sm:w-auto px-8 py-6 rounded-2xl shadow-lg 
-              bg-gradient-to-r from-[#b40000] to-[#ff4d4d] text-white border border-yellow-400/50 
-              transition-all duration-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(255,200,0,0.6)]"
-          >
-            <Link href="/menu">
-              <span className="relative z-10 flex items-center gap-2">
-                Xem Thực Đơn
-                <ArrowRight className="h-5 w-5" />
-              </span>
-              <span className="absolute inset-0 opacity-0 group-hover:opacity-30 bg-yellow-300/20 transition-opacity duration-500" />
-            </Link>
-          </Button>
-
-          <Button
-            size="lg"
-            variant="outline"
-            asChild
-            className="relative overflow-hidden font-semibold w-full sm:w-auto px-8 py-6 rounded-2xl 
-              border border-yellow-400 bg-white/80 text-[#800000] backdrop-blur-md shadow-md 
-              hover:scale-105 hover:shadow-[0_0_25px_rgba(255,200,0,0.5)] transition-all duration-500"
-          >
-            <a href="tel:0915885888">Gọi Đặt Hàng: 091 588 58 88</a>
-          </Button>
+          {/* Opening Hours */}
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-sm font-medium text-white">
+                10h - 14h, 17h -22h
+              </p>
+            </div>
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 backdrop-blur-sm">
+              <Clock className="h-5 w-5 text-white" />
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      {/* Hiệu ứng ánh sáng chuyển động nhẹ */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/10 to-transparent animate-slow-shimmer" />
-    </section>
-
+  {/* Tailwind Keyframes cho Clouds */}
+  <style jsx>{`
+    @keyframes cloudLeftRight {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(100px); }
+      100% { transform: translateX(0); }
+    }
+    .animate-cloud-left-right {
+      animation: cloudLeftRight linear infinite;
+    }
+  `}</style>
+</section>
 
 
 
@@ -258,7 +290,7 @@ export default function HomePage() {
                 variant="secondary"
                 className="font-semibold w-full sm:w-auto bg-white text-primary hover:bg-white/90 hover:scale-105 transition-all duration-300 shadow-md rounded-xl"
               >
-                <a href="tel:0901234567">Gọi: 0901 234 567</a>
+                <a href="tel:0901234567">091 588 58 88</a>
               </Button>
             </div>
           </div>
