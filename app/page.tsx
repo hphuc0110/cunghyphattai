@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Header } from "@/components/header"
@@ -6,6 +7,7 @@ import { ProductCard } from "@/components/product-card"
 import { ArrowRight, Star, Clock, Truck } from "lucide-react"
 import { categories, products } from "@/lib/data"
 import { InfiniteMovingCards } from "@/components/infinite-moving-cards"
+import { motion } from "framer-motion"
 
 export default function HomePage() {
   const featuredProducts = products.filter((p) => p.featured).slice(0, 8)
@@ -13,59 +15,82 @@ export default function HomePage() {
   return (
     <>
       <Header />
-        {/* Hero Section */}
-        <section className="relative flex items-end overflow-hidden min-h-[500px] sm:min-h-[600px] md:min-h-[700px] lg:min-h-[800px]">
-          <div className="absolute inset-0">
-            <div
-              className="w-full h-full bg-cover bg-center bg-no-repeat transition-all duration-500"
-              style={{
-                backgroundImage: "url(/images/herosection.png)",
-              }}
-            />
-          </div>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-white/10 via-black/30 to-transparent" />
+    <section className="relative flex items-center justify-center overflow-hidden min-h-[600px] sm:min-h-[700px] lg:min-h-[800px]">
+      {/* Ảnh nền chính */}
+      <div className="absolute inset-0">
+        <div
+          className="w-full h-full bg-cover bg-center transition-all duration-700 scale-105 hover:scale-110"
+          style={{
+            backgroundImage: "url(/images/herosection.png)",
+          }}
+        />
+      </div>
 
-          <div className="relative z-10 container px-4 sm:px-6 md:px-8 py-10 sm:py-16 text-center text-white">
-            <div className="mx-auto max-w-2xl">
-            <div
-  className="
-    flex flex-col sm:flex-row 
-    items-center justify-center 
-    gap-2 mt-96
-  "
->
-  {/* Nút 1: Xem thực đơn */}
-  <Button
-    size="lg"
-    asChild
-    className="relative overflow-hidden group font-semibold w-full sm:w-auto px-8 py-6 rounded-xl shadow-lg 
-    bg-white text-[#cd0000] transition-all duration-300 hover:shadow-2xl hover:scale-105"
-  >
-    <Link href="/menu">
-      <span className="relative z-10 flex items-center gap-2">
-        Xem Thực Đơn
-        <ArrowRight className="h-5 w-5" />
-      </span>
-      <span className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-white transition-opacity duration-300" />
-    </Link>
-  </Button>
+      {/* Overlay hiệu ứng Trung Hoa */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
+      <div className="absolute inset-0 backdrop-blur-[1px]" />
 
-  {/* Nút 2: Gọi đặt hàng */}
-  <Button
-    size="lg"
-    variant="outline"
-    asChild
-    className="relative overflow-hidden font-semibold w-full sm:w-auto px-8 py-6 rounded-xl 
-    border border-white/80 bg-white/80 text-gray-900 backdrop-blur-md shadow-md 
-    hover:scale-105 hover:shadow-xl hover:bg-white transition-all duration-300"
-  >
-    <a href="tel:0901234567">Gọi Đặt Hàng: 091 588 58 88</a>
-  </Button>
-</div>
-            </div>
-          </div>
-        </section>
+      {/* Họa tiết trang trí Trung Hoa */}
+      <img
+        src="/images/cloud.png"
+        alt="Mây Trung Hoa"
+        className="absolute left-0 bottom-0 w-[180px] sm:w-[250px] opacity-80 animate-float-slow"
+      />
+      <img
+        src="/images/cloud.png"
+        alt="Mây Trung Hoa"
+        className="absolute right-0 top-0 w-[160px] sm:w-[220px] opacity-70 animate-float-slow-delayed"
+      />
+      <img
+        src="/images/lantern.png"
+        alt="Đèn lồng"
+        className="absolute top-10 left-30 w-[100px] sm:w-[140px] drop-shadow-[0_0_10px_rgba(255,200,100,0.7)] animate-swing-slow"
+      />
+
+      {/* Nội dung chính */}
+      <div className="relative z-10 text-center text-white px-6 sm:px-8 max-w-3xl">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-wide mb-6 text-yellow-300 drop-shadow-[0_0_10px_rgba(255,200,0,0.6)]">
+          Ẩm Thực Trung Hoa Thượng Hạng
+        </h1>
+
+        {/* Nút hành động */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Button
+            size="lg"
+            asChild
+            className="relative overflow-hidden group font-semibold w-full sm:w-auto px-8 py-6 rounded-2xl shadow-lg 
+              bg-gradient-to-r from-[#b40000] to-[#ff4d4d] text-white border border-yellow-400/50 
+              transition-all duration-500 hover:scale-105 hover:shadow-[0_0_25px_rgba(255,200,0,0.6)]"
+          >
+            <Link href="/menu">
+              <span className="relative z-10 flex items-center gap-2">
+                Xem Thực Đơn
+                <ArrowRight className="h-5 w-5" />
+              </span>
+              <span className="absolute inset-0 opacity-0 group-hover:opacity-30 bg-yellow-300/20 transition-opacity duration-500" />
+            </Link>
+          </Button>
+
+          <Button
+            size="lg"
+            variant="outline"
+            asChild
+            className="relative overflow-hidden font-semibold w-full sm:w-auto px-8 py-6 rounded-2xl 
+              border border-yellow-400 bg-white/80 text-[#800000] backdrop-blur-md shadow-md 
+              hover:scale-105 hover:shadow-[0_0_25px_rgba(255,200,0,0.5)] transition-all duration-500"
+          >
+            <a href="tel:0915885888">Gọi Đặt Hàng: 091 588 58 88</a>
+          </Button>
+        </div>
+      </div>
+
+      {/* Hiệu ứng ánh sáng chuyển động nhẹ */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/10 to-transparent animate-slow-shimmer" />
+    </section>
+
+
+
 
         {/* Featured Products */}
 {/* ✨ Features Section – Trung Hoa sang trọng + mây vàng chuyển động */}
@@ -143,54 +168,80 @@ export default function HomePage() {
 
         {/* Categories */}
         <section className="py-16 bg-gradient-to-b from-white to-gray-50">
-          <div className="container px-4">
-            <div className="mb-10 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-3">Danh Mục Món Ăn</h2>
-              <p className="text-muted-foreground text-base font-medium">
-                Khám phá các món ăn đặc sắc từ ẩm thực Trung Hoa
-              </p>
-            </div>
+  <div className="container px-4">
+    {/* Tiêu đề */}
+    <div className="mb-10 text-center">
+      <h2 className="text-3xl md:text-4xl font-bold mb-3">Danh Mục Món Ăn</h2>
+      <p className="text-muted-foreground text-base font-medium">
+        Khám phá các món ăn đặc sắc từ ẩm thực Trung Hoa
+      </p>
+    </div>
 
-            <div className="relative">
-              <InfiniteMovingCards
-                items={categories.map((category) => ({
-                  id: category.id,
-                  content: (
-                    <Link
-                      href="/menu"
-                      className="group relative flex flex-col items-center justify-end min-w-[200px] sm:min-w-[220px] mx-4 
-                      h-[260px] sm:h-[300px] overflow-hidden rounded-[2rem] border-2 border-primary/30 
-                      bg-gradient-to-b from-primary/10 via-white/10 to-primary/10 shadow-[0_0_15px_rgba(255,100,100,0.2)]
-                      transition-all duration-500 hover:scale-105 hover:shadow-[0_0_30px_rgba(255,100,100,0.5)]"
-                    >
-                      {/* Ảnh */}
-                      <div className="absolute inset-0 overflow-hidden rounded-[2rem]">
-                        <img
-                          src={category.image || "/placeholder.svg"}
-                          alt={category.name}
-                          className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-all duration-500"
-                        />
-                      </div>
+    {/* Grid danh mục */}
+    <div
+      className="
+        grid 
+        grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 
+        gap-6 place-items-center
+      "
+    >
+      {categories.map((category) => (
+        <Link
+          key={category.id}
+          href="/menu"
+          className="
+            relative w-full 
+            h-[260px] sm:h-[300px] md:h-[340px] 
+            overflow-hidden rounded-2xl 
+            group shadow-lg transition-all duration-500
+            border-2 border-transparent
+            hover:border-[#ff4d4d]/50
+            hover:shadow-[0_0_25px_rgba(255,77,77,0.5)]
+          "
+        >
+          {/* Ảnh */}
+          <img
+            src={category.image || '/placeholder.svg'}
+            alt={category.name}
+            className="
+              w-full h-full object-cover
+              transition-transform duration-700 ease-out
+              group-hover:scale-110
+            "
+          />
 
-                      {/* Viền phát sáng kiểu Genshin */}
-                      <div className="absolute inset-0 rounded-[2rem] border-2 border-white/30 group-hover:border-primary/60 
-                      shadow-[0_0_20px_rgba(255,255,255,0.2)] group-hover:shadow-[0_0_30px_rgba(255,100,100,0.4)] transition-all duration-500" />
+          {/* Viền sáng kiểu Genshin */}
+          <div
+            className="
+              absolute inset-0 rounded-2xl 
+              border-2 border-white/10 
+              group-hover:border-[#ff4d4d]/70
+              transition-all duration-700
+              shadow-[0_0_15px_rgba(255,255,255,0.2)]
+              group-hover:shadow-[0_0_30px_rgba(255,77,77,0.4)]
+              animate-none group-hover:animate-glowPulse
+            "
+          />
 
-                      {/* Gradient nền chữ */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 via-black/30 to-transparent rounded-b-[2rem]">
-                        <h3 className="text-lg font-bold text-white drop-shadow-md">{category.name}</h3>
-                        <p className="text-xs text-white/80">{category.nameEn}</p>
-                      </div>
-                    </Link>
-                  ),
-                }))}
-                direction="left"
-                pauseOnHover={true}
-                duration={240000}
-              />
-            </div>
+          {/* Overlay chữ */}
+          <div
+            className="
+              absolute bottom-0 left-0 right-0 
+              bg-gradient-to-t from-black/70 via-black/30 to-transparent 
+              p-4 rounded-b-2xl
+            "
+          >
+            <h3 className="text-white text-lg font-semibold drop-shadow-md">
+              {category.name}
+            </h3>
+            <p className="text-white/80 text-xs">{category.nameEn}</p>
           </div>
-        </section>
+        </Link>
+      ))}
+    </div>
+  </div>
+</section>
+
 
         {/* CTA */}
         <section className="py-16">
