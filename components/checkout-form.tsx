@@ -61,9 +61,43 @@ export function CheckoutForm() {
         return
       }
 
-      // Clear cart and redirect to success page
-      clearCart()
-      router.push(`/order-success?orderId=${response.data.orderId}`)
+      const createdOrderId = response.data.orderId
+
+      if (formData.paymentMethod === "cash") {
+        clearCart()
+        router.push(`/order-success?orderId=${createdOrderId}`)
+        return
+      }
+
+      // For online payment, request signed payment URL from server (no secrets on client)
+      const res = await fetch("/api/payments/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: createdOrderId,
+          amount: total,
+          currency: "VND",
+          returnUrlPath: `/order-success?orderId=${createdOrderId}`,
+        }),
+      })
+
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}))
+        setError(j?.error || "Không tạo được liên kết thanh toán")
+        setLoading(false)
+        return
+      }
+
+      const data = await res.json()
+      const url: string | undefined = data?.paymentUrl
+      if (!url) {
+        setError("Phản hồi không hợp lệ từ máy chủ thanh toán")
+        setLoading(false)
+        return
+      }
+
+      // Do not clear cart until provider callback confirms success; keep state until return
+      window.location.href = url
     } catch (error) {
       console.error("[v0] Error creating order:", error)
       setError("An error occurred. Please try again.")
@@ -141,8 +175,8 @@ export function CheckoutForm() {
               <Label htmlFor="cash">Tiền mặt khi nhận hàng</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="bank_transfer" id="bank_transfer" />
-              <Label htmlFor="bank_transfer">Chuyển khoản ngân hàng</Label>
+              <RadioGroupItem value="zalopay" id="zalopay" />
+              <Label htmlFor="zalopay">ZaloPay</Label>
             </div>
           </RadioGroup>
         </CardContent>

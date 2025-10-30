@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     customerPhone: "",
     customerEmail: "",
     deliveryAddress: "",
-    paymentMethod: "cash" as "cash" | "card" | "online",
+    paymentMethod: "cash" as "cash" | "zalopay",
     specialInstructions: "",
   })
 
@@ -75,12 +75,41 @@ export default function CheckoutPage() {
       const data = await response.json()
 
       if (data.success) {
-        clearCart()
-        toast({
-          title: "Đặt hàng thành công!",
-          description: `Mã đơn hàng: ${data.data.id}`,
+        const createdOrderId = data.data.orderId || data.data._id
+        if (formData.paymentMethod === "cash") {
+          clearCart()
+          toast({
+            title: "Đặt hàng thành công!",
+            description: `Mã đơn hàng: ${createdOrderId}`,
+          })
+          router.push(`/orders/${createdOrderId}`)
+          return
+        }
+
+        // ZaloPay flow: request payment URL from server and redirect
+        const appUser = formData.customerPhone || formData.customerEmail || "guest"
+        const payRes = await fetch("/api/payments/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: createdOrderId,
+            amount: total,
+            appUser,
+          }),
         })
-        router.push(`/orders/${data.data.id}`)
+
+        if (!payRes.ok) {
+          const j = await payRes.json().catch(() => ({}))
+          throw new Error(j?.error || "Không tạo được liên kết ZaloPay")
+        }
+
+        const payData = await payRes.json()
+        const url: string | undefined = payData?.paymentUrl
+        if (!url) {
+          throw new Error("Phản hồi không hợp lệ từ máy chủ thanh toán")
+        }
+
+        window.location.href = url
       } else {
         throw new Error(data.error)
       }
@@ -157,16 +186,6 @@ export default function CheckoutPage() {
                           />
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email (tùy chọn)</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="email@example.com"
-                          value={formData.customerEmail}
-                          onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                        />
-                      </div>
                     </CardContent>
                   </Card>
 
@@ -203,41 +222,80 @@ export default function CheckoutPage() {
                   </Card>
 
                   {/* Payment Method */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Phương Thức Thanh Toán</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <RadioGroup
-                        value={formData.paymentMethod}
-                        onValueChange={(value) =>
-                          setFormData({ ...formData, paymentMethod: value as "cash" | "card" | "online" })
-                        }
-                      >
-                        <div className="flex items-center space-x-2 rounded-lg border p-4">
-                          <RadioGroupItem value="cash" id="cash" />
-                          <Label htmlFor="cash" className="flex-1 cursor-pointer">
-                            <div className="font-medium">Tiền mặt</div>
-                            <div className="text-sm text-muted-foreground">Thanh toán khi nhận hàng</div>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 rounded-lg border p-4">
-                          <RadioGroupItem value="card" id="card" />
-                          <Label htmlFor="card" className="flex-1 cursor-pointer">
-                            <div className="font-medium">Thẻ tín dụng/ghi nợ</div>
-                            <div className="text-sm text-muted-foreground">Thanh toán bằng thẻ khi nhận hàng</div>
-                          </Label>
-                        </div>
-                        <div className="flex items-center space-x-2 rounded-lg border p-4">
-                          <RadioGroupItem value="online" id="online" />
-                          <Label htmlFor="online" className="flex-1 cursor-pointer">
-                            <div className="font-medium">Chuyển khoản</div>
-                            <div className="text-sm text-muted-foreground">Chuyển khoản ngân hàng</div>
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </CardContent>
-                  </Card>
+    <Card>
+            <CardHeader>
+              <CardTitle className="text-center">Phương Thức Thanh Toán</CardTitle>
+            </CardHeader>
+            <CardContent>
+            <RadioGroup
+                 value={formData.paymentMethod}
+                onValueChange={(value) =>
+                 setFormData({
+                ...formData,
+          paymentMethod: value as "cash" | "zalopay",
+        })
+      }
+      className="flex flex-col items-center space-y-4"
+    >
+      {/* Tiền mặt */}
+      <div className="flex justify-center rounded-lg border p-4 w-full max-w-sm">
+        <label
+          htmlFor="cash"
+          className="flex items-center gap-4 cursor-pointer w-full justify-center"
+        >
+          <div className="flex items-center gap-3 w-full">
+            <RadioGroupItem
+              value="cash"
+              id="cash"
+              // className="shrink-0  align-middle"
+            />
+            <div className="flex items-center gap-3 flex-1">
+              <div className="flex items-center justify-center h-10 w-10 bg-gray-100 rounded-full">
+                💵
+              </div>
+              <div className="text-left">
+                <div className="font-medium">Tiền mặt</div>
+                <div className="text-sm text-muted-foreground">
+                  Thanh toán khi nhận hàng
+                </div>
+              </div>
+            </div>
+          </div>
+        </label>
+      </div>
+
+      {/* ZaloPay */}
+      <div className="flex justify-center rounded-lg border p-4 w-full max-w-sm">
+        <label
+          htmlFor="zalopay"
+          className="flex items-center gap-4 cursor-pointer w-full justify-center"
+        >
+          <div className="flex items-center w-full gap-3">
+            <RadioGroupItem
+              value="zalopay"
+              id="zalopay"
+              className="shrink-0 align-middle"
+            />
+            <div className="flex items-center gap-3">
+              <img
+                src="/images/zalopay.png"
+                alt="ZaloPay"
+                className="h-10 w-10 object-contain"
+              />
+              <div className="text-left">
+                <div className="font-medium">ZaloPay</div>
+                <div className="text-sm text-muted-foreground">
+                  Thanh toán trực tuyến qua ZaloPay
+                </div>
+              </div>
+            </div>
+          </div>
+        </label>
+      </div>
+    </RadioGroup>
+  </CardContent>
+</Card>
+
                 </div>
               </div>
 

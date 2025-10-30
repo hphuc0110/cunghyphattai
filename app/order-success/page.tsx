@@ -1,40 +1,58 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle2 } from "lucide-react"
 import { ordersApi } from "@/lib/api"
+import { useCartStore } from "@/lib/cart-store"
 
 export default function OrderSuccessPage() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const orderId = searchParams.get("orderId")
   const [order, setOrder] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const { clearCart } = useCartStore()
 
   useEffect(() => {
-    async function fetchOrder() {
+    async function confirmAndLoad() {
       if (!orderId) {
         setLoading(false)
         return
       }
+      try {
+        await fetch(`/api/orders/${orderId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentStatus: "paid" }),
+        })
+      } catch {}
+
+      // Try reconcile with provider in case callback is delayed
+      try {
+        await fetch(`/api/payments/status`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderId }),
+        })
+      } catch {}
 
       try {
-        const response = await ordersApi.getById(orderId)
-        if (response.success) {
-          setOrder(response.data)
-        }
-      } catch (error) {
-        console.error("[v0] Error fetching order:", error)
-      } finally {
-        setLoading(false)
-      }
+        const res = await fetch(`/api/orders/${orderId}`)
+        const j = await res.json().catch(() => ({} as any))
+        if (j?.success) setOrder(j.data)
+      } catch {}
+
+      clearCart()
+      setLoading(false)
     }
 
-    fetchOrder()
-  }, [orderId])
+    confirmAndLoad()
+  }, [orderId, clearCart])
+
 
   if (loading) {
     return (

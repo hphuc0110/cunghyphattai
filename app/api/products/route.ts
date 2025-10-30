@@ -149,8 +149,8 @@ export async function POST(request: NextRequest) {
       preparationTime: body.preparationTime,
     }
 
-    // Only add price if it exists
-    if (body.price) {
+    // Only add price if it exists (including 0 for market price)
+    if (body.price !== undefined && body.price !== null) {
       productData.price = body.price
     }
 

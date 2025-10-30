@@ -211,7 +211,7 @@ export default function AdminProductsPage() {
       name: product.name,
       nameEn: product.nameEn || "",
       description: product.description,
-      price: product.price.toString(),
+      price: product.price !== undefined && product.price !== null ? product.price.toString() : "",
       categoryId: product.categoryId,
       image: product.image,
       featured: product.featured,
@@ -318,7 +318,7 @@ export default function AdminProductsPage() {
   }
 
   const handleAddVariant = () => {
-    if (!newVariant.name || !newVariant.price) {
+    if (!newVariant.name || newVariant.price.trim() === "" || isNaN(Number.parseFloat(newVariant.price))) {
       toast({
         title: "Lỗi",
         description: "Vui lòng điền đầy đủ thông tin phân loại",

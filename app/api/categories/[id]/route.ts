@@ -12,38 +12,42 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     const body = await request.json()
     const { id } = params
 
-    // Handle order conflicts if order is being updated
+    // Handle order conflicts if order is being updated - perform swap when duplicated
     if (body.order !== undefined) {
-      const existingCategory = await Category.findOne({ 
-        order: body.order, 
-        _id: { $ne: id } 
-      })
-      
-      if (existingCategory) {
-        // Get the current category's order
-        const currentCategory = await Category.findById(id).select('order')
+      const targetOrder: number = body.order
+      const conflicting = await Category.findOne({ order: targetOrder, _id: { $ne: id } })
+
+      if (conflicting) {
+        // Get current order of the category being updated
+        const currentCategory = await Category.findById(id).select("order")
         const currentOrder = currentCategory?.order
-        
-        if (currentOrder !== undefined) {
-          if (body.order > currentOrder) {
-            // Moving down: shift categories between current and new position
-            await Category.updateMany(
-              { 
-                order: { $gt: currentOrder, $lte: body.order },
-                _id: { $ne: id }
-              },
-              { $inc: { order: -1 } }
-            )
-          } else {
-            // Moving up: shift categories between new and current position
-            await Category.updateMany(
-              { 
-                order: { $gte: body.order, $lt: currentOrder },
-                _id: { $ne: id }
-              },
-              { $inc: { order: 1 } }
-            )
+
+        if (currentOrder !== undefined && currentOrder !== targetOrder) {
+          // Use a safe temporary order value to avoid unique index conflicts
+          const maxOrderDoc = await Category.findOne().sort({ order: -1 }).select("order")
+          let tempOrder = (maxOrderDoc?.order ?? 0) + 1000
+
+          // Move conflicting category to temporary slot, set new order, then move conflicting to old slot
+          await Category.updateOne({ _id: conflicting._id }, { $set: { order: tempOrder } })
+          await Category.updateOne({ _id: id }, { $set: { order: targetOrder } })
+          await Category.updateOne({ _id: conflicting._id }, { $set: { order: currentOrder } })
+
+          // Avoid re-updating order again below; strip order from body while keeping other fields
+          const { order, ...rest } = body
+          const swappedCategory = await Category.findByIdAndUpdate(id, rest, {
+            new: true,
+            runValidators: true,
+          })
+
+          if (!swappedCategory) {
+            return NextResponse.json({ success: false, error: "Category not found" }, { status: 404 })
           }
+
+          return NextResponse.json({
+            success: true,
+            data: swappedCategory,
+            message: "Category updated successfully",
+          })
         }
       }
     }

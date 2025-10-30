@@ -4,7 +4,7 @@ const OrderItemSchema = new Schema({
   product: {
     type: Schema.Types.ObjectId,
     ref: "Product",
-    required: true,
+    required: false,
   },
   // Snapshot of product data at time of order
   productName: {
@@ -85,13 +85,17 @@ const OrderSchema = new Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["cash", "card", "online"],
+      enum: ["cash", "zalopay"],
       required: true,
     },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "failed"],
       default: "pending",
+      index: true,
+    },
+    zpAppTransId: {
+      type: String,
       index: true,
     },
     specialInstructions: {
@@ -117,7 +121,6 @@ const OrderSchema = new Schema(
 // Indexes for common queries
 OrderSchema.index({ status: 1, createdAt: -1 })
 OrderSchema.index({ customerPhone: 1, createdAt: -1 })
-OrderSchema.index({ orderId: 1 })
 
 const Order = models.Order || model("Order", OrderSchema)
 

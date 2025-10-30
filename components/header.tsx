@@ -15,7 +15,6 @@ export function Header() {
     { href: "/", label: "Trang Chủ" },
     { href: "/menu", label: "Thực Đơn" },
     { href: "/about", label: "Giới Thiệu" },
-    { href: "/track-order", label: "Theo Dõi Đơn" },
   ]
 
   return (

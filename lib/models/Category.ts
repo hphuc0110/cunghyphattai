@@ -31,8 +31,7 @@ const CategorySchema = new Schema(
   },
 )
 
-// Index for sorting
-CategorySchema.index({ order: 1 })
+// Unique index on `order` is already defined by the schema field
 
 const Category = models.Category || model("Category", CategorySchema)
 

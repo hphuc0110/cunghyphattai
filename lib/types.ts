@@ -51,6 +51,7 @@ export type OrderStatus = "pending" | "confirmed" | "preparing" | "ready" | "del
 
 export interface Order {
   id: string
+  orderId: string
   customerName: string
   customerPhone: string
   customerEmail?: string

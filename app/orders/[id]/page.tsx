@@ -115,7 +115,7 @@ export default function OrderDetailPage() {
                   {statusInfo.label}
                 </Badge>
               </div>
-              <p className="text-muted-foreground">Đặt hàng lúc: {formatDate(order.createdAt)}</p>
+              <p className="text-muted-foreground text-white">Đặt hàng lúc: {formatDate(order.createdAt)}</p>
             </div>
 
             <div className="grid gap-6 lg:grid-cols-3">
@@ -129,12 +129,14 @@ export default function OrderDetailPage() {
                   <CardContent>
                     <div className="space-y-4">
                       {order.items.map((item, index) => (
-                        <div key={item.product.id}>
+                        <div key={(item.product as any)?.id || `${index}`}>
                           {index > 0 && <Separator className="my-4" />}
                           <div className="flex justify-between">
                             <div className="flex-1">
-                              <div className="font-medium">{item.product.name}</div>
-                              <div className="text-sm text-muted-foreground">{item.product.nameEn}</div>
+                              <div className="font-medium">{(item.product as any)?.name || item.productName}</div>
+                              {(item as any)?.product?.nameEn && (
+                                <div className="text-sm text-muted-foreground">{(item.product as any).nameEn}</div>
+                              )}
                               {item.specialInstructions && (
                                 <div className="mt-1 text-sm text-muted-foreground">
                                   Ghi chú: {item.specialInstructions}
@@ -143,9 +145,9 @@ export default function OrderDetailPage() {
                               <div className="mt-1 text-sm text-muted-foreground">Số lượng: {item.quantity}</div>
                             </div>
                             <div className="text-right">
-                              <div className="font-semibold">{formatPrice(item.product.price * item.quantity)}</div>
+                              <div className="font-semibold">{formatPrice(((item as any)?.product?.price || item.productPrice) * item.quantity)}</div>
                               <div className="text-sm text-muted-foreground">
-                                {formatPrice(item.product.price)} x {item.quantity}
+                                {formatPrice((item as any)?.product?.price || item.productPrice)} x {item.quantity}
                               </div>
                             </div>
                           </div>
@@ -230,21 +232,8 @@ export default function OrderDetailPage() {
 
                     <div>
                       <div className="mb-2 text-sm font-medium">Thanh toán</div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          {order.paymentMethod === "cash"
-                            ? "Tiền mặt"
-                            : order.paymentMethod === "card"
-                              ? "Thẻ"
-                              : "Chuyển khoản"}
-                        </span>
-                        <Badge variant={order.paymentStatus === "paid" ? "default" : "secondary"}>
-                          {order.paymentStatus === "paid"
-                            ? "Đã thanh toán"
-                            : order.paymentStatus === "failed"
-                              ? "Thất bại"
-                              : "Chưa thanh toán"}
-                        </Badge>
+                      <div className="flex items-center text-center justify-between">
+                        <span className="text-sm text-center text-muted-foreground">{order.paymentMethod === "cash" ? "Tiền mặt" : "ZaloPay"}</span>
                       </div>
                     </div>
                   </CardContent>

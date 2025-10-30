@@ -29,6 +29,28 @@ export default function HomePage() {
     fetchCategories()
   }, [])
 
+  useEffect(() => {
+    // Fallback: if redirected after payment, mark order paid in case callback hasn't updated yet
+    const url = new URL(window.location.href)
+    const payment = url.searchParams.get("payment")
+    const orderId = url.searchParams.get("orderId")
+    if (payment === "success" && orderId) {
+      ;(async () => {
+        try {
+          await fetch(`/api/orders/${orderId}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentStatus: "paid" }),
+          })
+        } catch {}
+        // Clean query params
+        url.searchParams.delete("payment")
+        url.searchParams.delete("orderId")
+        window.history.replaceState({}, "", `${url.pathname}${url.search}`)
+      })()
+    }
+  }, [])
+
   return (
     <>
       <Header />

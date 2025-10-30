@@ -104,16 +104,26 @@ export async function POST(request: Request) {
     // Process items and create snapshots
     const orderItems = await Promise.all(
       body.items.map(async (item: any) => {
-        const product = await Product.findById(item.product.id || item.product._id)
-        if (!product) {
-          throw new Error(`Product not found: ${item.product.id || item.product._id}`)
+        let product = null as any
+        const candidateId = item?.product?._id || item?.product?.id || item?.product
+        try {
+          if (candidateId) {
+            product = await Product.findById(candidateId)
+          }
+        } catch {}
+        if (!product && item?.product?.name) {
+          product = await Product.findOne({ name: item.product.name })
         }
 
+        const snapshotName = product?.name ?? item?.product?.name ?? ""
+        const snapshotPrice =
+          product?.price ?? item?.variant?.price ?? item?.product?.price ?? 0
+
         return {
-          product: product._id,
-          productName: product.name,
-          productPrice: product.price,
-          quantity: item.quantity,
+          product: product?._id,
+          productName: snapshotName,
+          productPrice: snapshotPrice,
+          quantity: Number(item.quantity) || 1,
           specialInstructions: item.specialInstructions,
         }
       }),
