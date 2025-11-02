@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, memo, useRef } from "react"
 import Image from "next/image"
 import { Card, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -16,16 +16,24 @@ import { ShoppingCart, Flame } from "lucide-react"
 import type { Product, ProductVariant } from "@/lib/types"
 import { useCartStore } from "@/lib/cart-store"
 import { useToast } from "@/hooks/use-toast"
+import { imageCache } from "@/lib/image-cache"
 
 interface ProductCardProps {
   product: Product
   backImage?: string
+  priority?: boolean // Ưu tiên load cho ảnh đầu tiên
+  index?: number // Index trong grid để xác định priority
 }
 
-export function ProductCard({ product, backImage }: ProductCardProps) {
+function ProductCardComponent({ product, backImage, priority = false, index = 0 }: ProductCardProps) {
   const addItem = useCartStore((state) => state.addItem)
   const { toast } = useToast()
   const [mounted, setMounted] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  // Sử dụng useRef để persist shouldLoad state và tránh re-render
+  const shouldLoadRef = useRef(priority || imageCache.isLoaded(product.image || ""))
+  const [shouldLoad, setShouldLoad] = useState(priority || imageCache.isLoaded(product.image || ""))
+  const imgRef = useRef<HTMLDivElement>(null)
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product.variants?.[0] || null
   )
@@ -33,6 +41,41 @@ export function ProductCard({ product, backImage }: ProductCardProps) {
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Intersection Observer cho lazy loading thông minh - chỉ chạy một lần
+  useEffect(() => {
+    if (priority || shouldLoad) {
+      // Nếu đã priority hoặc shouldLoad, không cần observer
+      if (priority) setShouldLoad(true)
+      return
+    }
+
+    if (!imgRef.current) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !shouldLoadRef.current) {
+            shouldLoadRef.current = true
+            setShouldLoad(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        rootMargin: "150px", // Tăng lên để load sớm hơn
+        threshold: 0.01, // Trigger khi 1% ảnh visible
+      },
+    )
+
+    const currentRef = imgRef.current
+    observer.observe(currentRef)
+
+    return () => {
+      observer.disconnect()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Chỉ chạy một lần khi mount
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -85,19 +128,44 @@ export function ProductCard({ product, backImage }: ProductCardProps) {
     <Card className="group h-full overflow-hidden rounded-2xl border border-gray-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-white">
       {/* Hình ảnh sản phẩm */}
       <div
-        className="relative w-full aspect-[4/5] overflow-hidden rounded-t-2xl bg-cover bg-center"
+        ref={imgRef}
+        className="relative w-full aspect-[4/5] overflow-hidden rounded-t-2xl bg-cover bg-center bg-gray-100"
         style={backImage ? { backgroundImage: `url(${backImage})` } : {}}
       >
-        <Image
-          src={product.image || "/placeholder.svg"}
-          alt={product.name}
-          width={400}
-          height={500}
-          className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-110"
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-        />
+        {shouldLoad || shouldLoadRef.current ? (
+          <Image
+            src={product.image || "/placeholder.svg"}
+            alt={product.name}
+            width={300}
+            height={375}
+            className={`object-cover w-full h-full transition-opacity duration-300 group-hover:scale-110 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={priority ? "high" : "auto"}
+            sizes="(max-width: 640px) 180px, (max-width: 1024px) 240px, 300px"
+            quality={priority ? 75 : 60}
+            onLoad={() => {
+              setImageLoaded(true)
+              shouldLoadRef.current = true
+              // Cache ảnh đã load để không load lại
+              if (product.image) {
+                imageCache.markLoaded(product.image)
+              }
+            }}
+            onError={() => {
+              // Fallback nếu ảnh lỗi
+              setImageLoaded(true)
+              shouldLoadRef.current = true
+              if (product.image) {
+                imageCache.markLoaded(product.image)
+              }
+            }}
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 animate-pulse" />
+        )}
 
         {/* Overlay Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/5 to-transparent opacity-80" />
@@ -234,3 +302,42 @@ export function ProductCard({ product, backImage }: ProductCardProps) {
     </Card>
   )
 }
+
+// Memoize component để tránh re-render không cần thiết
+// Chỉ re-render nếu các props quan trọng thay đổi
+export const ProductCard = memo(ProductCardComponent, (prevProps, nextProps) => {
+  // Return true nếu props giống nhau (không cần re-render)
+  // Return false nếu props khác nhau (cần re-render)
+  
+  // Quick check - nếu là cùng product object, không re-render
+  if (prevProps.product === nextProps.product && prevProps.backImage === nextProps.backImage && prevProps.priority === nextProps.priority) {
+    return true
+  }
+  
+  // Deep comparison cho các trường quan trọng
+  const productChanged = 
+    prevProps.product.id !== nextProps.product.id ||
+    prevProps.product.image !== nextProps.product.image ||
+    prevProps.product.name !== nextProps.product.name ||
+    prevProps.product.available !== nextProps.product.available ||
+    prevProps.product.price !== nextProps.product.price ||
+    prevProps.product.featured !== nextProps.product.featured ||
+    prevProps.product.spicyLevel !== nextProps.product.spicyLevel
+  
+  // Chỉ so sánh variants nếu có
+  const variantsChanged = 
+    (prevProps.product.variants?.length || 0) !== (nextProps.product.variants?.length || 0) ||
+    (prevProps.product.variants && nextProps.product.variants &&
+      prevProps.product.variants.some((v, i) => {
+        const nextV = nextProps.product.variants?.[i]
+        return !nextV || v.id !== nextV.id || v.name !== nextV.name || v.price !== nextV.price
+      }))
+  
+  // Props khác
+  const otherPropsChanged = 
+    prevProps.backImage !== nextProps.backImage ||
+    prevProps.priority !== nextProps.priority
+  
+  // Chỉ re-render nếu có thay đổi
+  return !productChanged && !variantsChanged && !otherPropsChanged
+})

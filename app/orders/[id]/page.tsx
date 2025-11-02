@@ -21,9 +21,7 @@ export default function OrderDetailPage() {
         const response = await fetch(`/api/orders/${params.id}`)
         const data = await response.json()
 
-        if (data.success) {
-          setOrder(data.data)
-        }
+        if (data.success) setOrder(data.data)
       } catch (error) {
         console.error("Failed to fetch order:", error)
       } finally {
@@ -34,22 +32,17 @@ export default function OrderDetailPage() {
     fetchOrder()
   }, [params.id])
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(price)
-  }
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(price)
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleString("vi-VN", {
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleString("vi-VN", {
       year: "numeric",
       month: "long",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     })
-  }
 
   const getStatusInfo = (status: Order["status"]) => {
     const statusMap = {
@@ -68,12 +61,10 @@ export default function OrderDetailPage() {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex-1">
-          <div className="container py-8">
-            <div className="mx-auto max-w-4xl space-y-6">
-              <div className="h-8 w-48 animate-pulse rounded bg-muted" />
-              <div className="h-64 animate-pulse rounded-lg bg-muted" />
-            </div>
+        <main className="flex-1 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+            <div className="h-64 w-80 animate-pulse rounded-xl bg-muted" />
           </div>
         </main>
         <Footer />
@@ -86,9 +77,11 @@ export default function OrderDetailPage() {
       <div className="flex min-h-screen flex-col">
         <Header />
         <main className="flex flex-1 items-center justify-center">
-          <div className="text-center">
-            <h2 className="mb-2 text-2xl font-bold">Không tìm thấy đơn hàng</h2>
-            <p className="text-muted-foreground">Đơn hàng này không tồn tại hoặc đã bị xóa</p>
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold text-foreground">Không tìm thấy đơn hàng</h2>
+            <p className="text-muted-foreground">
+              Đơn hàng này không tồn tại hoặc đã bị xóa.
+            </p>
           </div>
         </main>
         <Footer />
@@ -100,145 +93,181 @@ export default function OrderDetailPage() {
   const StatusIcon = statusInfo.icon
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       <Header />
 
       <main className="flex-1">
-        <div className="container py-8">
-          <div className="mx-auto max-w-4xl">
-            {/* Order Header */}
-            <div className="mb-8">
-              <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-3xl font-bold">Đơn Hàng #{order.id}</h1>
-                <Badge className={`${statusInfo.color} gap-1 text-white`}>
+        <div className="container py-10">
+          <div className="mx-auto max-w-5xl space-y-8">
+            {/* Header đơn hàng */}
+            <div className="rounded-2xl bg-white p-6 shadow-sm border">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h1 className="text-2xl font-bold tracking-tight">
+                  Đơn hàng #{order.id}
+                </h1>
+                <Badge className={`${statusInfo.color} text-white px-3 py-1.5 text-sm gap-1`}>
                   <StatusIcon className="h-4 w-4" />
                   {statusInfo.label}
                 </Badge>
               </div>
-              <p className="text-muted-foreground text-white">Đặt hàng lúc: {formatDate(order.createdAt)}</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Đặt hàng lúc: {formatDate(order.createdAt)}
+              </p>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-3">
-              {/* Order Details */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Order Items */}
-                <Card>
+            <div className="grid gap-8 lg:grid-cols-3">
+              {/* Chi tiết món ăn + giao hàng */}
+              <div className="space-y-8 lg:col-span-2">
+                <Card className="shadow-md border">
                   <CardHeader>
-                    <CardTitle>Món Ăn</CardTitle>
+                    <CardTitle className="text-lg font-semibold">Món ăn đã đặt</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {order.items.map((item, index) => (
-                        <div key={(item.product as any)?.id || `${index}`}>
-                          {index > 0 && <Separator className="my-4" />}
-                          <div className="flex justify-between">
-                            <div className="flex-1">
-                              <div className="font-medium">{(item.product as any)?.name || item.productName}</div>
-                              {(item as any)?.product?.nameEn && (
-                                <div className="text-sm text-muted-foreground">{(item.product as any).nameEn}</div>
-                              )}
-                              {item.specialInstructions && (
-                                <div className="mt-1 text-sm text-muted-foreground">
-                                  Ghi chú: {item.specialInstructions}
-                                </div>
-                              )}
-                              <div className="mt-1 text-sm text-muted-foreground">Số lượng: {item.quantity}</div>
+                  <CardContent className="space-y-4">
+                    {order.items.map((item, index) => (
+                      <div key={index}>
+                        {index > 0 && <Separator className="my-4" />}
+                        <div className="flex justify-between items-start">
+                          <div className="space-y-1">
+                            <div className="font-medium text-base">
+                              {(item.product as any)?.name || item.productName}
                             </div>
-                            <div className="text-right">
-                              <div className="font-semibold">{formatPrice(((item as any)?.product?.price || item.productPrice) * item.quantity)}</div>
+                            {(item as any)?.product?.nameEn && (
                               <div className="text-sm text-muted-foreground">
-                                {formatPrice((item as any)?.product?.price || item.productPrice)} x {item.quantity}
+                                {(item.product as any).nameEn}
                               </div>
+                            )}
+                            {item.specialInstructions && (
+                              <div className="text-sm text-muted-foreground italic">
+                                Ghi chú: {item.specialInstructions}
+                              </div>
+                            )}
+                            <div className="text-sm text-muted-foreground">
+                              Số lượng: {item.quantity}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold">
+                              {formatPrice(
+                                ((item as any)?.product?.price || item.productPrice) *
+                                  item.quantity
+                              )}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {formatPrice((item as any)?.product?.price || item.productPrice)} ×{" "}
+                              {item.quantity}
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </CardContent>
                 </Card>
 
-                {/* Delivery Info */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Thông Tin Giao Hàng</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground">Người nhận</div>
-                      <div>{order.customerName}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground">Số điện thoại</div>
-                      <div>{order.customerPhone}</div>
-                    </div>
-                    {order.customerEmail && (
-                      <div>
-                        <div className="text-sm font-medium text-muted-foreground">Email</div>
-                        <div>{order.customerEmail}</div>
-                      </div>
-                    )}
-                    <div>
-                      <div className="text-sm font-medium text-muted-foreground">Địa chỉ giao hàng</div>
-                      <div>{order.deliveryAddress}</div>
-                    </div>
-                    {order.specialInstructions && (
-                      <div>
-                        <div className="text-sm font-medium text-muted-foreground">Ghi chú</div>
-                        <div>{order.specialInstructions}</div>
-                      </div>
-                    )}
-                    {order.estimatedDeliveryTime && (
-                      <div>
-                        <div className="text-sm font-medium text-muted-foreground">Thời gian giao dự kiến</div>
-                        <div>{formatDate(order.estimatedDeliveryTime)}</div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <Card className="shadow-md border rounded-xl overflow-hidden">
+  <CardHeader className="bg-gray-50 border-b py-3 px-5">
+    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+      🚚 Thông tin giao hàng
+    </CardTitle>
+  </CardHeader>
+
+  <CardContent className="divide-y divide-gray-100 px-5 py-4 text-sm">
+    <div className="py-2">
+      <p className="text-muted-foreground font-medium">Người nhận</p>
+      <p className="font-semibold text-2xl">{order.customerName}</p>
+    </div>
+
+    <div className="py-2">
+      <p className="text-muted-foreground font-medium">Số điện thoại</p>
+      <p className="font-semibold text-2xl">{order.customerPhone}</p>
+    </div>
+
+    {order.customerEmail && (
+      <div className="py-2">
+        <p className="text-muted-foreground font-medium">Email</p>
+        <p className="font-semibold text-2xl">{order.customerEmail}</p>
+      </div>
+    )}
+
+    <div className="py-2">
+      <p className="text-muted-foreground font-medium ">Địa chỉ giao hàng</p>
+      <p className="font-semibold leading-relaxed text-2xl">{order.deliveryAddress}</p>
+    </div>
+
+    {order.specialInstructions && (
+      <div className="py-2">
+        <p className="text-muted-foreground font-medium">Ghi chú</p>
+        <p className="italic text-gray-700">{order.specialInstructions}</p>
+      </div>
+    )}
+  </CardContent>
+</Card>
+
               </div>
 
-              {/* Order Summary */}
-              <div className="lg:col-span-1">
-                <Card className="sticky top-20">
-                  <CardHeader>
-                    <CardTitle>Tổng Quan</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Tạm tính</span>
-                        <span className="font-medium">{formatPrice(order.subtotal)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Phí giao hàng</span>
-                        <span className="font-medium">
-                          {order.deliveryFee === 0 ? (
-                            <span className="text-green-600">Miễn phí</span>
-                          ) : (
-                            formatPrice(order.deliveryFee)
-                          )}
-                        </span>
-                      </div>
-                    </div>
+              {/* Tổng quan đơn hàng */}
+              <Card className="shadow-md border sticky top-24 h-fit">
+  <CardHeader>
+    <CardTitle className="text-lg font-semibold">Tổng quan đơn hàng</CardTitle>
+  </CardHeader>
 
-                    <Separator />
+  <CardContent className="space-y-4">
+    {/* Tổng tạm tính */}
+    <div className="space-y-2 text-sm">
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Tạm tính</span>
+        <span>{formatPrice(order.subtotal)}</span>
+      </div>
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Phí giao hàng</span>
+        <span>
+          {order.deliveryFee === 0 ? (
+            <span className="text-green-600 font-medium">Miễn phí</span>
+          ) : (
+            formatPrice(order.deliveryFee)
+          )}
+        </span>
+      </div>
+    </div>
 
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Tổng cộng</span>
-                      <span className="text-xl font-bold text-primary">{formatPrice(order.total)}</span>
-                    </div>
+    <Separator />
 
-                    <Separator />
+    {/* Tổng cộng */}
+    <div className="flex justify-between items-center">
+      <span className="font-semibold">Tổng cộng</span>
+      <span className="text-xl font-bold text-primary">
+        {formatPrice(order.total)}
+      </span>
+    </div>
 
-                    <div>
-                      <div className="mb-2 text-sm font-medium">Thanh toán</div>
-                      <div className="flex items-center text-center justify-between">
-                        <span className="text-sm text-center text-muted-foreground">{order.paymentMethod === "cash" ? "Tiền mặt" : "ZaloPay"}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+    <Separator />
+
+    {/* Hình thức thanh toán */}
+    <div className="text-sm">
+      <p className="font-medium text-muted-foreground mb-1">
+        Hình thức thanh toán
+      </p>
+
+      <div className="flex items-center justify-between">
+        {order.paymentMethod === "cash" ? (
+          <div className="flex items-center justify-center w-full gap-2">
+            <span className="text-lg">💵</span>
+            <span>Tiền mặt</span>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center w-full gap-2">
+            <img
+              src="/images/zalopay.png"
+              alt="ZaloPay"
+              className="h-16 w-16 object-contain"
+            />
+            <span>ZaloPay</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
             </div>
           </div>
         </div>

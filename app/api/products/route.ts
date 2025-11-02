@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/auth-helpers"
 // GET /api/products - Get all products with filters
 export async function GET(request: Request) {
   try {
+    // Connect DB - có cache connection nên nhanh
     await connectDB()
 
     const { searchParams } = new URL(request.url)
@@ -16,15 +17,12 @@ export async function GET(request: Request) {
     const limit = Number.parseInt(searchParams.get("limit") || "50")
     const skip = (page - 1) * limit
 
-    console.log("[v0] API Products - category param:", category)
-
     // Build query
     const query: any = {}
 
     // Filter by category
     if (category && category !== "all") {
       query.category = category
-      console.log("[v0] API Products - filtering by category:", category)
     }
 
     // Filter by featured
@@ -38,36 +36,34 @@ export async function GET(request: Request) {
       query.available = true
     }
 
-    // Search by name or description
+    // Search by name or description - tối ưu với text index nếu có
     if (search) {
+      // Ưu tiên text search nếu có index
+      const searchRegex = { $regex: search, $options: "i" }
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { nameEn: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-        { descriptionEn: { $regex: search, $options: "i" } },
+        { name: searchRegex },
+        { nameEn: searchRegex },
+        { description: searchRegex },
+        { descriptionEn: searchRegex },
       ]
     }
 
-    const allProducts = await Product.find({}).select("name category").limit(10).lean()
-    console.log(
-      "[v0] API Products - ALL products in DB (first 10):",
-      allProducts.map((p: any) => ({ name: p.name, category: p.category })),
-    )
-    console.log("[v0] API Products - Query being used:", JSON.stringify(query))
+    // Tối ưu sort để sử dụng indexes tốt nhất
+    // Nếu có category filter, sort theo category + featured để dùng compound index
+    const sortOrder: any = category && category !== "all"
+      ? { category: 1, featured: -1, createdAt: -1 } // Dùng compound index
+      : { featured: -1, createdAt: -1 } // Sort mặc định
 
-    // Execute query with pagination
+    // Execute query with pagination - chỉ select fields cần thiết để tối ưu
     const [products, total] = await Promise.all([
-      Product.find(query).sort({ featured: -1, createdAt: -1 }).skip(skip).limit(limit).lean(),
+      Product.find(query)
+        .select("name nameEn description descriptionEn image category price variants featured available spicyLevel tags")
+        .sort(sortOrder)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       Product.countDocuments(query),
     ])
-
-    console.log("[v0] API Products - found products:", products.length)
-    if (products.length > 0) {
-      console.log(
-        "[v0] API Products - sample matched products:",
-        products.slice(0, 3).map((p: any) => ({ name: p.name, category: p.category })),
-      )
-    }
 
     const productsWithId = products.map((product: any) => ({
       ...product,
@@ -75,13 +71,24 @@ export async function GET(request: Request) {
       categoryId: product.category,
     }))
 
-    return NextResponse.json({
-      success: true,
-      data: productsWithId,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    })
+    // Cache products API - shorter cache vì có thể thay đổi thường xuyên hơn categories
+    // Cache 5 phút, stale-while-revalidate 1 giờ
+    return NextResponse.json(
+      {
+        success: true,
+        data: productsWithId,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+      },
+      {
+        headers: {
+          "Cache-Control": search
+            ? "public, s-maxage=60, stale-while-revalidate=300" // Shorter cache for search results
+            : "public, s-maxage=300, stale-while-revalidate=3600", // 5 min cache, 1h stale
+        },
+      },
+    )
   } catch (error) {
     console.error("[v0] Error fetching products:", error)
     return NextResponse.json({ success: false, error: "Failed to fetch products" }, { status: 500 })

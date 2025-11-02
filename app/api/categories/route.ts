@@ -14,10 +14,17 @@ export async function GET() {
       id: category._id.toString(),
     }))
 
-    return NextResponse.json({
-      success: true,
-      data: categoriesWithId,
-    })
+    return NextResponse.json(
+      {
+        success: true,
+        data: categoriesWithId,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400", // Cache 1 hour, stale-while-revalidate 24h
+        },
+      },
+    )
   } catch (error) {
     console.error("[v0] Error fetching categories:", error)
     return NextResponse.json({ success: false, error: "Failed to fetch categories" }, { status: 500 })

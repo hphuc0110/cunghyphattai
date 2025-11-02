@@ -88,6 +88,11 @@ const ProductSchema = new Schema(
 // Create indexes for better query performance
 ProductSchema.index({ name: "text", nameEn: "text", description: "text" })
 ProductSchema.index({ category: 1, featured: -1 })
+// Compound index cho query phổ biến: category + available + featured
+ProductSchema.index({ category: 1, available: 1, featured: -1 })
+// Index cho search queries với available filter
+ProductSchema.index({ available: 1, name: 1 })
+ProductSchema.index({ available: 1, nameEn: 1 })
 
 // Prevent model recompilation in development
 const Product = models.Product || model("Product", ProductSchema)
